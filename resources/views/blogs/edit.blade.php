@@ -2,7 +2,7 @@
 
 @section('body')
     <div class="col-md-6 mx-auto">
-        <h1 class="text-center">Create </h1>
+        <h1 class="text-center">Edit </h1>
         @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>

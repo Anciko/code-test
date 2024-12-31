@@ -3,8 +3,8 @@
 @section('body')
     <div class="col-md-6 mx-auto">
         <h1 class="text-center">All blogs</h1>
-        <div class="d-flex justify-content-between">
-            <a href="{{ route('blogs.create') }}">Create</a>
+        <div class="d-flex justify-content-between mb-2">
+            <a href="{{ route('blogs.create') }}" class="btn btn-primary">Create New+</a>
             <div>
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf

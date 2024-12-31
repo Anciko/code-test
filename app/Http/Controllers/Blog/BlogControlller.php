@@ -6,15 +6,22 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Http\Requests\StoreBlogRequest;
 use App\Http\Requests\UpdateBlogRequest;
+use App\Interfaces\BlogRepositoryInterface;
 
 class BlogControlller extends Controller
 {
+    private BlogRepositoryInterface $blogRepository;
+    public function __construct(BlogRepositoryInterface $blogRepository)
+    {
+        $this->blogRepository = $blogRepository;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $blogs = Blog::query()->orderBy('created_at', 'DESC')->paginate(3);
+        $blogs = $this->blogRepository->getBlogs();
+
         return view('blogs.index', compact('blogs'));
     }
 
@@ -31,9 +38,8 @@ class BlogControlller extends Controller
      */
     public function store(StoreBlogRequest $request)
     {
-        $blogData = $request->only('title', 'body');
-        $blogData['user_id'] = auth()->user()->id;
-        Blog::create($blogData);
+        $data = $request->only('title', 'body');
+        $this->blogRepository->createBlog($data);
 
         return redirect()->route('blogs.index')->with('success', 'Blog created success.');
     }
@@ -51,9 +57,8 @@ class BlogControlller extends Controller
      */
     public function update(UpdateBlogRequest $request, Blog $blog)
     {
-        $blogData = $request->only('title', 'body');
-        $blogData['user_id'] = auth()->user()->id;
-        Blog::where('id', $blog->id)->update($blogData);
+        $data = $request->only('title', 'body');
+        $this->blogRepository->updateBlog($data, $blog);
 
         return redirect()->route('blogs.index')->with('success', 'Blog updaed success.');
     }
@@ -63,7 +68,7 @@ class BlogControlller extends Controller
      */
     public function destroy(Blog $blog)
     {
-        $blog->delete();
-        return redirect()->back()->with('success', 'BLog Deleted');
+        $this->blogRepository->deleteBlog($blog);
+        return redirect()->back()->with('success', 'Blog Deleted');
     }
 }
